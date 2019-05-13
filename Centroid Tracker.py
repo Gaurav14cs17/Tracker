@@ -126,7 +126,6 @@ while 1:
         cv2.circle(img, (centroid[0], centroid[1]), 4, (0, 255, 0), -1)
 
     cv2.imshow('img',img)
-    ++x;
     print("No of frame--> " ,x)
     k = cv2.waitKey(1) & 0xff
     if k == 27: 
