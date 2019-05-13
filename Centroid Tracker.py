@@ -1,4 +1,3 @@
-
 from collections import OrderedDict
 import math
 
@@ -17,8 +16,6 @@ class CentroidTracker():
         self.disappeared[self.nextObjectID] = 0
         self.nextObjectID += 1
         
-    
-
     def deregister(self , objectID ):
         del self.objects[objectID]
         del self.disappeared[objectID]
@@ -28,7 +25,6 @@ class CentroidTracker():
 
     def update(self , rects ) :
         if(len(rects) == 0):
- 
             for objectID in list(self.disappeared.keys()):
                 self.disappeared[objectID] += 1
                 if self.disappeared[objectID] > self.maxDisappeared:
@@ -43,8 +39,7 @@ class CentroidTracker():
 
         if( len(self.objects)==0):
              for i in  inputCentroids :
-             	print(i)
-             	self.register(i)
+                self.register(i)
         else:
              objectCentroids = list(self.objects.values())
              idx = []
@@ -57,7 +52,6 @@ class CentroidTracker():
                            ans = ( j , d )
                  idx.append(( i , ans[0]))
                  dist[i] = int(ans[1])
-             print(idx)
 
              used_idx = set()
              used_current_cent= set()
@@ -70,7 +64,7 @@ class CentroidTracker():
                     continue
 
                 if dist[idx[i][0]] > self.maxDistance :
-                	continue
+                    continue
 
                 self.objects[idx[i][0]] = inputCentroids[idx[i][1]]
                 self.disappeared[idx[i][0]] = 0
@@ -103,8 +97,8 @@ class CentroidTracker():
 
 
 import cv2
-face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml') 
-cap = cv2.VideoCapture("p2.mp4") 
+face_cascade = cv2.CascadeClassifier('p1.xml') 
+cap = cv2.VideoCapture(0) 
 ct = CentroidTracker() 
 x = 0
 while 1:   
@@ -126,7 +120,6 @@ while 1:
         cv2.circle(img, (centroid[0], centroid[1]), 4, (0, 255, 0), -1)
 
     cv2.imshow('img',img)
-    print("No of frame--> " ,x)
     k = cv2.waitKey(1) & 0xff
     if k == 27: 
         break
