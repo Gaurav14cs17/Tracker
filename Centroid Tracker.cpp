@@ -84,54 +84,48 @@ void My_Tracker::deregistered( int objectID){
  	   map<int , double >dist;
 
  	   for(auto it : objects ){
-        pair<int , int >ans = {-1 , INT_MAX};
-        for( int j = 0 ; j<inputCentroid.size() ; ++j ){
-            double d = D(it.second.first , it.second.second , inputCentroid[j].first , inputCentroid[j].second );
-            if( d <= ans.second ){
-                ans = { j , d };
-            }
-        }
-        idx.push_back({it.first , ans.first });
-        dist[it.first] = ans.second ;
-        unused_centroid.insert(it.first);
+		pair<int , int >ans = {-1 , INT_MAX};
+		for( int j = 0 ; j<inputCentroid.size() ; ++j ){
+		    double d = D(it.second.first , it.second.second , inputCentroid[j].first , inputCentroid[j].second );
+		    if( d <= ans.second ){
+			ans = { j , d };
+		    }
+		}
+		idx.push_back({it.first , ans.first });
+		dist[it.first] = ans.second ;
+		unused_centroid.insert(it.first);
  	   }
 
  	   set<int>used_idx;
  	   set<int>used_current_centroid;
 
-       for(auto it : idx ){
+           for(auto it : idx ){
+		if(used_idx.find(it.second)!= used_idx.end()|| used_current_centroid.find(it.first)!= used_current_centroid.end())
+		    continue;
+		if(dist[it.first] > mxDistance ){
+		    continue;
+		}
+		objects[it.first] = inputCentroid[it.second ];
+		disappeared[it.first] = 0;
+		used_idx.insert(it.second);
+		used_current_centroid.insert(it.first);
+		auto x = unused_current_centroid.find(it.second);
+		if( x  != unused_current_centroid.end())unused_current_centroid.erase(x);
+		 x = unused_centroid.find(it.first);
+		if(x != unused_centroid.end()) unused_centroid.erase(x);
+	    }
 
-        if(used_idx.find(it.second)!= used_idx.end()|| used_current_centroid.find(it.first)!= used_current_centroid.end())
-            continue;
-
-        if(dist[it.first] > mxDistance ){
-            continue;
-        }
-
-        objects[it.first] = inputCentroid[it.second ];
-        disappeared[it.first] = 0;
-
-        used_idx.insert(it.second);
-        used_current_centroid.insert(it.first);
-
-        auto x = unused_current_centroid.find(it.second);
-        if( x  != unused_current_centroid.end())unused_current_centroid.erase(x);
-
-         x = unused_centroid.find(it.first);
-        if(x != unused_centroid.end()) unused_centroid.erase(x);
-       }
-
-       if(objects.size() >= inputCentroid.size()){
-        for(auto it : unused_centroid ){
-            disappeared[it]+= 1;
-            if( disappeared[it] > mxDistance )
-                deregistered(it);
-        }
-       }else{
-         for(auto it : unused_current_centroid)registered(inputCentroid[it]);
-       }
- 	}
-    return objects;
+	    if(objects.size() >= inputCentroid.size()){
+		for(auto it : unused_centroid ){
+		    disappeared[it]+= 1;
+		    if( disappeared[it] > mxDistance )
+			deregistered(it);
+		}
+	     }else{
+		 for(auto it : unused_current_centroid)registered(inputCentroid[it]);
+	     }
+	}
+	return objects;
  }
 
 
