@@ -1,0 +1,146 @@
+#include"iostream"
+#include "map"
+#include "set"
+#include "vector"
+#include "math.h"
+
+using namespace std;
+
+struct Box{
+    int x ;
+    int y ;
+    int x1 ;
+    int y1;
+};
+
+
+class My_Tracker{
+
+private:
+	int next_ide = 0;
+	map<int , pair<int , int > > objects;
+	map<int , int >disappeared;
+	int mxDisappeared ;
+	int mxDistance ;
+
+public :
+    My_Tracker(int maxDisappeared = 5 ,  int maxDistance = 80 );
+    void registered(pair<int , int > centroid );
+    void deregistered( int objectID);
+    double D( int a , int b , int c , int  d);
+    map<int ,pair<int , int >> update(std::vector<Box>v);
+};
+
+My_Tracker::My_Tracker(int maxDisappeared ,  int maxDistance  ){
+	My_Tracker::mxDisappeared = mxDisappeared;
+	My_Tracker::mxDistance = mxDistance ;
+}
+
+ void My_Tracker::registered(pair<int , int > centroid ){
+ 	My_Tracker::objects[My_Tracker::next_ide] = centroid;
+ 	My_Tracker::disappeared[My_Tracker::next_ide] = 0;
+ 	++ My_Tracker::next_ide;
+ }
+
+void My_Tracker::deregistered( int objectID){
+	My_Tracker::objects.erase(objectID);
+	My_Tracker::disappeared.erase(objectID);
+}
+
+
+ double  My_Tracker:: D( int a , int b , int c , int  d){
+ 	return sqrt((a-c)*(a-c) + (b-d)*(b-d));
+ }
+
+ map<int , pair<int , int >> My_Tracker:: update(std::vector<Box>v){
+
+ 	if(v.size()==0){
+ 		for(auto it : disappeared){
+ 			disappeared[it.first] += 1;
+ 			if(disappeared[it.first] >mxDisappeared)
+ 				 deregistered(it.first);
+ 		}
+ 		return objects;
+ 	}
+
+ 	vector<pair<int , int >>inputCentroid ;
+ 	set<int >unused;
+ 	set<int >unused_centroid;
+
+ 	for(int i = 0 ; i<v.size() ; ++i ){
+        Box tmp = v[i];
+        int cx = (tmp.x + tmp.x1 )/2;
+        int cy = (tmp.y + tmp.y1) /2;
+        inputCentroid.push_back({cx , cy });
+        unused.insert(i);
+ 	}
+
+ 	if(objects.size()==0){
+        for(auto it : inputCentroid)
+            registered(it);
+ 	}else{
+
+ 	   vector<pair<int , int >>idx;
+ 	   map<int , double >dist;
+
+ 	   for(auto it : objects ){
+        pair<int , int >ans = {-1 , INT_MAX};
+        for( int j = 0 ; j<inputCentroid.size() ; ++j ){
+            double d = D(it.second.first , it.second.second , inputCentroid[j].first , inputCentroid[j].second );
+            if( d <= ans.second ){
+                ans = { j , d };
+            }
+        }
+        idx.push_back({it.first , ans.first });
+        dist[it.first] = ans.second ;
+        unused_centroid.insert(it.first);
+ 	   }
+
+ 	   set<int>used_idx;
+ 	   set<int>used_current_centroid;
+
+       for(auto it : idx ){
+
+        if(used_idx.find(it.second)!= unused.end()|| used_current_centroid.find(it.first)!= used_current_centroid.end())
+            continue;
+
+        if(dist[it.first] > mxDistance ){
+            continue;
+        }
+
+        objects[it.first] = inputCentroid[it.second ];
+        disappeared[it.first] = 0;
+
+        used_idx.insert(it.second);
+        used_current_centroid.insert(it.first);
+
+        auto x = unused.find(it.second);
+        if( x  != unused.end())unused.erase(x);
+
+         x = unused_centroid.find(it.first);
+        if(x != unused_centroid.end()) unused_centroid.erase(x);
+       }
+
+       if(objects.size() >= inputCentroid.size()){
+        for(auto it : unused_centroid ){
+            disappeared[it]+= 1;
+            if( disappeared[it] > mxDistance )
+                deregistered(it);
+        }
+       }else{
+         for(auto it : unused)registered(inputCentroid[it]);
+       }
+ 	}
+    return objects;
+ }
+
+
+
+
+
+int main(){
+
+
+}
+
+
