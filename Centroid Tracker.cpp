@@ -37,14 +37,14 @@ My_Tracker::My_Tracker(int maxDisappeared ,  int maxDistance  ){
 }
 
  void My_Tracker::registered(pair<int , int > centroid ){
- 	My_Tracker::objects[My_Tracker::next_ide] = centroid;
- 	My_Tracker::disappeared[My_Tracker::next_ide] = 0;
+ 	objects[My_Tracker::next_ide] = centroid;
+ 	disappeared[My_Tracker::next_ide] = 0;
  	++ My_Tracker::next_ide;
  }
 
 void My_Tracker::deregistered( int objectID){
-	My_Tracker::objects.erase(objectID);
-	My_Tracker::disappeared.erase(objectID);
+	objects.erase(objectID);
+	disappeared.erase(objectID);
 }
 
 
