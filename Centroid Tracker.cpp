@@ -20,11 +20,11 @@ private:
 	int next_ide = 0;
 	map<int , pair<int , int > > objects;
 	map<int , int >disappeared;
-	int mxDisappeared ;
-	int mxDistance ;
+	int mxDisappeared = 10;
+	int mxDistance = 80;
 
 public :
-    My_Tracker(int maxDisappeared = 5 ,  int maxDistance = 80 );
+    My_Tracker(int maxDisappeared  ,  int maxDistance );
     void registered(pair<int , int > centroid );
     void deregistered( int objectID);
     double D( int a , int b , int c , int  d);
@@ -32,8 +32,8 @@ public :
 };
 
 My_Tracker::My_Tracker(int maxDisappeared ,  int maxDistance  ){
-	My_Tracker::mxDisappeared = mxDisappeared;
-	My_Tracker::mxDistance = mxDistance ;
+//	My_Tracker::mxDisappeared = mxDisappeared;
+//    My_Tracker::mxDistance = mxDistance ;
 }
 
  void My_Tracker::registered(pair<int , int > centroid ){
@@ -64,7 +64,7 @@ void My_Tracker::deregistered( int objectID){
  	}
 
  	vector<pair<int , int >>inputCentroid ;
- 	set<int >unused;
+ 	set<int >unused_current_centroid;
  	set<int >unused_centroid;
 
  	for(int i = 0 ; i<v.size() ; ++i ){
@@ -72,14 +72,14 @@ void My_Tracker::deregistered( int objectID){
         int cx = (tmp.x + tmp.x1 )/2;
         int cy = (tmp.y + tmp.y1) /2;
         inputCentroid.push_back({cx , cy });
-        unused.insert(i);
+        unused_current_centroid.insert(i);
  	}
 
  	if(objects.size()==0){
         for(auto it : inputCentroid)
             registered(it);
- 	}else{
-
+ 	}
+ 	else{
  	   vector<pair<int , int >>idx;
  	   map<int , double >dist;
 
@@ -101,7 +101,7 @@ void My_Tracker::deregistered( int objectID){
 
        for(auto it : idx ){
 
-        if(used_idx.find(it.second)!= unused.end()|| used_current_centroid.find(it.first)!= used_current_centroid.end())
+        if(used_idx.find(it.second)!= used_idx.end()|| used_current_centroid.find(it.first)!= used_current_centroid.end())
             continue;
 
         if(dist[it.first] > mxDistance ){
@@ -114,8 +114,8 @@ void My_Tracker::deregistered( int objectID){
         used_idx.insert(it.second);
         used_current_centroid.insert(it.first);
 
-        auto x = unused.find(it.second);
-        if( x  != unused.end())unused.erase(x);
+        auto x = unused_current_centroid.find(it.second);
+        if( x  != unused_current_centroid.end())unused_current_centroid.erase(x);
 
          x = unused_centroid.find(it.first);
         if(x != unused_centroid.end()) unused_centroid.erase(x);
@@ -128,7 +128,7 @@ void My_Tracker::deregistered( int objectID){
                 deregistered(it);
         }
        }else{
-         for(auto it : unused)registered(inputCentroid[it]);
+         for(auto it : unused_current_centroid)registered(inputCentroid[it]);
        }
  	}
     return objects;
@@ -142,5 +142,3 @@ int main(){
 
 
 }
-
-
