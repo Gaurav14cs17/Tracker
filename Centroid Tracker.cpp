@@ -118,7 +118,7 @@ void My_Tracker::deregistered( int objectID){
 	    if(objects.size() >= inputCentroid.size()){
 		for(auto it : unused_centroid ){
 		    disappeared[it]+= 1;
-		    if( disappeared[it] > mxDistance )
+		    if( disappeared[it] > mxDisappeared  )
 			deregistered(it);
 		}
 	     }else{
