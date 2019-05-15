@@ -27,7 +27,7 @@ public :
     My_Tracker(int maxDisappeared  ,  int maxDistance );
     void registered(pair<int , int > centroid );
     void deregistered( int objectID);
-    double D( int a , int b , int c , int  d);
+    int  D( int a , int b , int c , int  d);
     map<int ,pair<int , int >> update(std::vector<Box>v);
 };
 
@@ -48,7 +48,7 @@ void My_Tracker::deregistered( int objectID){
 }
 
 
- double  My_Tracker:: D( int a , int b , int c , int  d){
+ int  My_Tracker:: D( int a , int b , int c , int  d){
  	return sqrt((a-c)*(a-c) + (b-d)*(b-d));
  }
 
@@ -81,12 +81,12 @@ void My_Tracker::deregistered( int objectID){
  	}
  	else{
  	   vector<pair<int , int >>idx;
- 	   map<int , double >dist;
+ 	   map<int , int >dist;
 
  	   for(auto it : objects ){
 		pair<int , int >ans = {-1 , INT_MAX};
 		for( int j = 0 ; j<inputCentroid.size() ; ++j ){
-		    double d = D(it.second.first , it.second.second , inputCentroid[j].first , inputCentroid[j].second );
+		    int  d = D(it.second.first , it.second.second , inputCentroid[j].first , inputCentroid[j].second );
 		    if( d <= ans.second ){
 			ans = { j , d };
 		    }
