@@ -3,6 +3,7 @@
 #include "set"
 #include "vector"
 #include "math.h"
+#include "algorithm"
 
 using namespace std;
 
@@ -193,16 +194,7 @@ void My_Tracker::deregistered( int objectID){
 	   	cv::circle(img , cv::Point(it.second.first , it.second.second ) , 4 ,cv::Scalar(0 , 255 , 0 ) , -1 );
 	  }
 
-	  string s1 = "OUT : " + to_string(total_up) ;
-          string s2 = " IN : " + to_string(total_down);
-	  cv::putText( img , s1  , cv::Point(50 , H-20) , FONT_HERSHEY_DUPLEX, 1 ,cv::Scalar(0, 0, 255) , 2);
-          cv::putText( img , s2  , cv::Point(50 , H+30) , FONT_HERSHEY_DUPLEX, 1 ,cv::Scalar(0, 0, 255) , 2);
-	  if(check_line_cross.first==1 || check_line_cross.second ==1){
-	          cv::line(img , cv::Point(0 , H) , cv::Point( W , H ) , Scalar(0, 0 , 255) , 2 );
-          }
-	  else{
-	  	  cv::line(img , cv::Point(0 , H ) , cv::Point(W , H ) , Scalar(0, 255, 255) , 2 );
-              }
+	
 
   }
 
