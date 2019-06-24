@@ -4,6 +4,16 @@ import numpy as np
 from sklearn.utils.linear_assignment_ import linear_assignment
 from filterpy.kalman import KalmanFilter
 
+def get_cent(p1 , p2 ):
+  X = (p1[0] + p2[0])/2
+  Y = (p1[1] + p2[1])/2
+  return (X , Y)
+
+def get_point( bbox):
+  p1 = ( bbox[0] , bbox[1] )
+  p2 = ( bbox[2] , bbox[3] )
+  return (p1 , p2 )
+
 @jit
 def iou(bb_test,bb_gt):
   """
@@ -60,15 +70,18 @@ class KalmanBoxTracker(object):
     self.kf.P *= 10.
     self.kf.Q[-1,-1] *= 0.01
     self.kf.Q[4:,4:] *= 0.01
-
+    
     self.kf.x[:4] = convert_bbox_to_z(bbox)
     self.time_since_update = 0
     self.id = KalmanBoxTracker.count
     KalmanBoxTracker.count += 1
     self.history = []
+    self.point = get_point(bbox)
     self.hits = 0
     self.hit_streak = 0
     self.age = 0
+    self.prev_point =  ( None, None )
+    self.direction = None   # forward or backward 
 
   def update(self,bbox):
     """
@@ -79,6 +92,7 @@ class KalmanBoxTracker(object):
     self.hits += 1
     self.hit_streak += 1
     self.kf.update(convert_bbox_to_z(bbox))
+    self.prev_point = self.point
 
   def predict(self):
     """
