@@ -16,7 +16,7 @@ def get_point( bbox):
 
 def check_direction(prev_p , curr_p):
   left_or_right = prev_p[0] < curr_p[0] 
-  up_or_down = prev_p[1] < prev_p[1]
+  up_or_down = prev_p[1] < curr_p[1]
   return (left_or_right , up_or_down)
 
 @jit
