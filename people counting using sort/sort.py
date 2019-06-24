@@ -14,6 +14,11 @@ def get_point( bbox):
   p2 = ( bbox[2] , bbox[3] )
   return (p1 , p2 )
 
+def check_direction(prev_p , curr_p):
+  left_or_right = prev_p[0] < curr_p[0] 
+  up_or_down = prev_p[1] < prev_p[1]
+  return (left_or_right , up_or_down)
+
 @jit
 def iou(bb_test,bb_gt):
   """
@@ -77,11 +82,13 @@ class KalmanBoxTracker(object):
     KalmanBoxTracker.count += 1
     self.history = []
     self.point = get_point(bbox)
+    self.curr_centroid = get_cent(self.point)
+    self.prev_centroid = None
     self.hits = 0
     self.hit_streak = 0
     self.age = 0
     self.prev_point =  ( None, None )
-    self.direction = None   # forward or backward 
+    self.direction = None   # forward or backward and left or right
 
   def update(self,bbox):
     """
@@ -92,6 +99,9 @@ class KalmanBoxTracker(object):
     self.hits += 1
     self.hit_streak += 1
     self.kf.update(convert_bbox_to_z(bbox))
+    
+    self.direction = check_direction(self.prev_centroid , self.curr_centroid)
+    self.prev_centroid = self.curr_centroid
     self.prev_point = self.point
 
   def predict(self):
