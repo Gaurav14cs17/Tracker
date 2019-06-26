@@ -111,8 +111,7 @@ def main():
                                     item_list = [cropped, score, dist_rate, high_ratio_variance, width_rate]
                                     addtional_attribute_list.append(item_list)
 
-                            final_faces = np.array(face_list)
-
+                    final_faces = np.array(face_list)
                     trackers = tracker.update(final_faces, frame , img_size , detect_interval)
 
                     c += 1
