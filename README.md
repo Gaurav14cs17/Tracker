@@ -1,2 +1,2 @@
 # Tracker
-### face Tracking on nth frame using sort tracking 
+### Face Track and Detect :  on nth frame using Sort tracking 
